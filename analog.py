@@ -5,6 +5,7 @@
 
 from PIL import Image, ImageDraw  # type: ignore
 from typing import Tuple
+import math
 
 
 def get_time() -> None:
@@ -26,7 +27,7 @@ def draw_hand(length: int, angle: float, center: Tuple[int, int], image: Image) 
 
     """
     draw = ImageDraw.Draw(image)
-    draw.line([(center[0], center[1]), (104, 52)], 1)
+    draw.line([(center[0], center[1]), (104, 52)], fill=1)
 
 
 def draw_face(center: Tuple[int, int], image: Image) -> None:
@@ -38,7 +39,16 @@ def draw_face(center: Tuple[int, int], image: Image) -> None:
 
     """
     draw = ImageDraw.Draw(image)
-    draw.polygon([(52, 0), (104, 52), (52, 104), (0, 52)], outline=1)
+
+    for r in range(12):
+        base_x = math.cos((r * math.pi) / 6)
+        base_y = math.cos((r * math.pi) / 6)
+        draw.line([(base_x * 47 + 52, base_y * 47 + 52), (base_x * 52 + 52, base_y * 52 + 52)], fill=1)
+
+    for r in range(4):
+        base_x = math.cos((r * math.pi) / 2)
+        base_y = math.sin((r * math.pi) / 2)
+        draw.line([(base_x * 42 + 52, base_y * 42 + 52), (base_x * 52 + 52, base_y * 52 + 52)], fill=1, width=3)
 
 
 if __name__ == '__main__':
