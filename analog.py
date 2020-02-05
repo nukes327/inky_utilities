@@ -6,6 +6,7 @@
 from PIL import Image, ImageDraw  # type: ignore
 from typing import Tuple
 import math
+import time
 
 
 def get_time() -> None:
@@ -13,13 +14,13 @@ def get_time() -> None:
     pass
 
 
-def draw_hand(length: int, angle: float, center: Tuple[int, int], image: Image) -> None:
+def draw_hand(center: Tuple[int, int], length: int, time: int, image: Image) -> None:
     """Draw a hand of given length on the image.
 
     Args:
-        length: The length of the hand in pixels
-        angle:  Angle to rotate the hand by in radians
         center: Center point of the clock face
+        length: The length of the hand in pixels
+        time:   Integer from 0 to 59, corresponding to valid points on clock
         image:  Image file to draw on to
 
     Todo:
@@ -27,10 +28,13 @@ def draw_hand(length: int, angle: float, center: Tuple[int, int], image: Image) 
 
     """
     draw = ImageDraw.Draw(image)
-    draw.line([(center[0], center[1]), (104, 52)], fill=1)
+    time_offset = time - 15
+    outer_x = math.cos(math.radians(6 * time_offset)) * length + center[0]
+    outer_y = math.sin(math.radians(6 * time_offset)) * length + center[1]
+    draw.line([(center[0], center[1]), (outer_x, outer_y)], fill=1)
 
 
-def draw_face(center: Tuple[int, int], image: Image) -> None:
+def draw_face(center: Tuple[int, int], radius: int, image: Image) -> None:
     """Draw the face of the clock.
 
     Args:
@@ -39,16 +43,22 @@ def draw_face(center: Tuple[int, int], image: Image) -> None:
 
     """
     draw = ImageDraw.Draw(image)
+    ir = radius - round(radius / 10)
 
     for r in range(12):
-        base_x = math.cos((r * math.pi) / 6)
-        base_y = math.sin((r * math.pi) / 6)
-        draw.line([(base_x * 47 + 52, base_y * 47 + 52), (base_x * 52 + 52, base_y * 52 + 52)], fill=1)
+        if not r % 3:
+            pass
+        else:
+            base_x = math.cos((r * math.pi) / 6)
+            base_y = math.sin((r * math.pi) / 6)
+            draw.line([(base_x * ir + center[0], base_y * ir + center[1]),
+                       (base_x * radius + center[0], base_y * radius + center[1])], fill=1)
 
     for r in range(4):
         base_x = math.cos((r * math.pi) / 2)
         base_y = math.sin((r * math.pi) / 2)
-        draw.line([(base_x * 47 + 52, base_y * 47 + 52), (base_x * 52 + 52, base_y * 52 + 52)], fill=1, width=3)
+        draw.line([(base_x * ir + center[0], base_y * ir + center[1]),
+                   (base_x * radius + center[0], base_y * radius + center[1])], fill=1, width=3)
 
 
 if __name__ == '__main__':
@@ -58,8 +68,14 @@ if __name__ == '__main__':
     palette += 759 * [0]
 
     img = Image.new("P", (212, 104), color=0)
-    draw_hand(52, 0.0, (52, 52), img)
-    draw_face((52, 52), img)
+
+    now = time.localtime(time.time())
+    hour = (now.tm_hour % 12) * 5
+    minute = now.tm_min
+    draw_hand((52, 52), 48, minute, img)
+    draw_hand((52, 52), 24, hour, img)
+
+    draw_face((52, 52), 50, img)
     img.putpalette(palette)
     img.save('analog.png')
     try:
