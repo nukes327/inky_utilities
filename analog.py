@@ -42,13 +42,13 @@ def draw_face(center: Tuple[int, int], image: Image) -> None:
 
     for r in range(12):
         base_x = math.cos((r * math.pi) / 6)
-        base_y = math.cos((r * math.pi) / 6)
+        base_y = math.sin((r * math.pi) / 6)
         draw.line([(base_x * 47 + 52, base_y * 47 + 52), (base_x * 52 + 52, base_y * 52 + 52)], fill=1)
 
     for r in range(4):
         base_x = math.cos((r * math.pi) / 2)
         base_y = math.sin((r * math.pi) / 2)
-        draw.line([(base_x * 42 + 52, base_y * 42 + 52), (base_x * 52 + 52, base_y * 52 + 52)], fill=1, width=3)
+        draw.line([(base_x * 47 + 52, base_y * 47 + 52), (base_x * 52 + 52, base_y * 52 + 52)], fill=1, width=3)
 
 
 if __name__ == '__main__':
