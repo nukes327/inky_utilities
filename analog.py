@@ -32,11 +32,11 @@ def draw_hand(center: Tuple[int, int], length: int, time: int, image: Image) -> 
     outer_x = math.cos(math.radians(6 * time_offset)) * length + center[0]
     outer_y = math.sin(math.radians(6 * time_offset)) * length + center[1]
 
-    diamond_left_x = math.cos(math.radians(6 * time_offset - 5)) * (length - 4) + center[0]
-    diamond_left_y = math.sin(math.radians(6 * time_offset - 5)) * (length - 4) + center[1]
+    diamond_left_x = math.cos(math.radians(6 * time_offset - 4)) * (length - 4) + center[0]
+    diamond_left_y = math.sin(math.radians(6 * time_offset - 4)) * (length - 4) + center[1]
 
-    diamond_right_x = math.cos(math.radians(6 * time_offset + 5)) * (length - 4) + center[0]
-    diamond_right_y = math.sin(math.radians(6 * time_offset + 5)) * (length - 4) + center[1]
+    diamond_right_x = math.cos(math.radians(6 * time_offset + 4)) * (length - 4) + center[0]
+    diamond_right_y = math.sin(math.radians(6 * time_offset + 4)) * (length - 4) + center[1]
 
     inner_x = math.cos(math.radians(6 * time_offset)) * (length - 8) + center[0]
     inner_y = math.sin(math.radians(6 * time_offset)) * (length - 8) + center[1]
@@ -56,7 +56,10 @@ def draw_face(center: Tuple[int, int], radius: int, image: Image) -> None:
 
     """
     draw = ImageDraw.Draw(image)
-    ir = radius - round(radius / 10)
+    ir = radius - radius / 10
+    med = radius + 4
+
+    draw.ellipse([(center[0] - med, center[1] - med), (center[0] + med, center[1] + med)], outline=2)
 
     for r in range(12):
         if not r % 3:
@@ -72,6 +75,8 @@ def draw_face(center: Tuple[int, int], radius: int, image: Image) -> None:
         base_y = math.sin((r * math.pi) / 2)
         draw.line([(base_x * ir + center[0], base_y * ir + center[1]),
                    (base_x * radius + center[0], base_y * radius + center[1])], fill=1, width=3)
+        draw.line([(base_x * (ir + 1) + center[0], base_y * (ir + 1) + center[1]),
+                   (base_x * (radius - 1) + center[0], base_y * (radius - 1) + center[1])], fill=2)
 
 
 def draw_pin(center: Tuple[int, int], radius: int, image: Image) -> None:
@@ -88,6 +93,19 @@ def draw_pin(center: Tuple[int, int], radius: int, image: Image) -> None:
                  outline=1, fill=2)
 
 
+def draw_date(x: int, y: int, size: int, image: Image) -> None:
+    """Draw date information to the screen.
+
+    Args:
+        x:     X of top left corner of date
+        y:     Y of top left corner of date
+        size:  Font size of the date
+        image: Image to draw to
+
+    """
+    pass
+
+
 if __name__ == '__main__':
     palette = 3 * [255]
     palette += 3 * [0]
@@ -96,13 +114,13 @@ if __name__ == '__main__':
 
     img = Image.new("P", (212, 104), color=0)
 
-    draw_face((52, 52), 50, img)
+    draw_face((52, 52), 46, img)
 
     now = time.localtime(time.time())
     minute = now.tm_min
     hour = ((now.tm_hour % 12) + (minute / 60)) * 5
     draw_hand((52, 52), 48, minute, img)
-    draw_hand((52, 52), 36, hour, img)
+    draw_hand((52, 52), 32, hour, img)
 
     draw_pin((52, 52), 2, img)
 
