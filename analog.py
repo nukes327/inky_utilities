@@ -110,48 +110,80 @@ def draw_pin(center: Tuple[int, int], radius: int, image: Image) -> None:
                  outline=1, fill=2)
 
 
-def draw_date(x: int, y: int, now: time.struct_time, image: Image, size: int = 10) -> None:
+def draw_date(now: time.struct_time, image: Image, size: int = 16) -> None:
     """Draw date information to the screen.
 
     Args:
-        x:     X of top left corner of date
-        y:     Y of top left corner of date
-        size:  Font size of the date
+        now:   Struct_time with time to display
         image: Image to draw to
+        size:  Font size of the date
 
     """
     font = ImageFont.truetype('resources/alagard.ttf', size=size)
     draw = ImageDraw.Draw(image)
-    datestring = time.strftime('%a %d\n%b %y')
-    draw.text((x, y), datestring, font=font, fill=1)
+    draw.text((4, 4), time.strftime('%b %d\n%a\n%Y'), font=font, fill=1)
 
 
+def draw_weather(image: Image, size: int = 16) -> None:
+    """Draw some local weather information to the screen.
+
+    Args:
+        image: The image to draw to
+
+    """
+    try:
+        import requests
+        from bs4 import BeautifulSoup
+    except Exception as e:
+        return
+    res = requests.get("https://darksky.net/forecast/40.2723,-82.8835/us12/en")
+    if (res.status_code == 200):
+        soup = BeautifulSoup(res.content, "lxml")
+        current = soup.find_all("span", "currently")
+        summary = current[0].find("span", "summary")
+        temp, weather = summary.string.split('\xA0')
+        temp = temp[:-1] + ' deg'
+        weather = weather[:-1]
+        draw = ImageDraw.Draw(image)
+        font = ImageFont.truetype('resources/alagard.ttf', size=size)
+        tw, th = draw.textsize(temp, font)
+        ww, wh = draw.textsize(weather, font)
+        wl = max(128, 212 - ww)
+        draw.text((wl, 4), weather, font=font, fill=1, align='right')
+        draw.text((212 - tw, 20), temp, font=font, fill=1, align='right')
+        
+
+        
 if __name__ == '__main__':
     palette = 3 * [255]
     palette += 3 * [0]
     palette += [166, 152, 1]
     palette += 759 * [0]
 
+    clock_center = 90
+
     img = Image.new("P", (212, 104), color=0)
 
-    draw_face((106, 52), 46, img)
+    draw_face((clock_center, 52), 46, img)
 
     now = time.localtime(time.time())
     minute = now.tm_min
     hour = ((now.tm_hour % 12) + (minute / 60)) * 5
-    draw_fancy_hand((106, 52), 46, minute, img)
-    draw_fancy_hand((106, 52), 30, hour, img)
+    draw_fancy_hand((clock_center, 52), 46, minute, img)
+    draw_fancy_hand((clock_center, 52), 30, hour, img)
 
     # second = now.tm_sec
     second = randint(0, 59)
     while((second == minute) or (second == hour)):
         second = randint(0, 59)
 
-    draw_simple_hand((106, 52), 42, second, 2, img)
+    draw_simple_hand((clock_center, 52), 42, second, 2, img)
 
-    draw_pin((106, 52), 2, img)
+    draw_pin((clock_center, 52), 2, img)
 
-    draw_date(6, 6, now, img, 16)
+    draw_date(now, img)
+
+    draw_weather(img)
 
     img.putpalette(palette)
     img.save('analog.png')
