@@ -4,6 +4,7 @@ Various informational utilities built for use on a raspberry pi with an inky dis
 ### Analog
 Displays an analog clock face and other time related information to the display.
 
+-----
 
 ###### Notes
 This library is a work in progress for my own personal use currently.

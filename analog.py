@@ -3,10 +3,11 @@
 
 """Display an analog clock face on an inky display."""
 
-from PIL import Image, ImageDraw  # type: ignore
+from PIL import Image, ImageDraw, ImageFont  # type: ignore
 from typing import Tuple
 import math
 import time
+from random import randint
 
 
 def get_time() -> None:
@@ -109,7 +110,7 @@ def draw_pin(center: Tuple[int, int], radius: int, image: Image) -> None:
                  outline=1, fill=2)
 
 
-def draw_date(x: int, y: int, size: int, image: Image) -> None:
+def draw_date(x: int, y: int, now: time.struct_time, image: Image, size: int = 10) -> None:
     """Draw date information to the screen.
 
     Args:
@@ -119,7 +120,10 @@ def draw_date(x: int, y: int, size: int, image: Image) -> None:
         image: Image to draw to
 
     """
-    pass
+    font = ImageFont.truetype('resources/alagard.ttf', size=size)
+    draw = ImageDraw.Draw(image)
+    datestring = time.strftime('%a %d\n%b %y')
+    draw.text((x, y), datestring, font=font, fill=1)
 
 
 if __name__ == '__main__':
@@ -130,18 +134,24 @@ if __name__ == '__main__':
 
     img = Image.new("P", (212, 104), color=0)
 
-    draw_face((52, 52), 46, img)
+    draw_face((106, 52), 46, img)
 
     now = time.localtime(time.time())
     minute = now.tm_min
-    second = now.tm_sec
     hour = ((now.tm_hour % 12) + (minute / 60)) * 5
-    draw_fancy_hand((52, 52), 48, minute, img)
-    draw_fancy_hand((52, 52), 32, hour, img)
+    draw_fancy_hand((106, 52), 46, minute, img)
+    draw_fancy_hand((106, 52), 30, hour, img)
 
-    draw_simple_hand((52, 52), 44, second, 2, img)
+    # second = now.tm_sec
+    second = randint(0, 59)
+    while((second == minute) or (second == hour)):
+        second = randint(0, 59)
 
-    draw_pin((52, 52), 2, img)
+    draw_simple_hand((106, 52), 42, second, 2, img)
+
+    draw_pin((106, 52), 2, img)
+
+    draw_date(6, 6, now, img, 16)
 
     img.putpalette(palette)
     img.save('analog.png')
@@ -153,6 +163,7 @@ if __name__ == '__main__':
         pass
     else:
         inky_display = InkyPHAT('yellow')
+        img.rotate(180)
         inky_display.set_image(img)
         inky_display.set_border(inky_display.BLACK)
         inky_display.show()
