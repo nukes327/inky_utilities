@@ -163,7 +163,6 @@ if __name__ == '__main__':
         pass
     else:
         inky_display = InkyPHAT('yellow')
-        img.rotate(180)
-        inky_display.set_image(img)
+        inky_display.set_image(img.rotate(180))
         inky_display.set_border(inky_display.BLACK)
         inky_display.show()
