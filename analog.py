@@ -14,7 +14,7 @@ def get_time() -> None:
     pass
 
 
-def draw_hand(center: Tuple[int, int], length: int, time: int, image: Image) -> None:
+def draw_fancy_hand(center: Tuple[int, int], length: int, time: int, image: Image) -> None:
     """Draw a hand of given length on the image.
 
     Args:
@@ -22,9 +22,6 @@ def draw_hand(center: Tuple[int, int], length: int, time: int, image: Image) -> 
         length: The length of the hand in pixels
         time:   Integer from 0 to 59, corresponding to valid points on clock
         image:  Image file to draw on to
-
-    Todo:
-        Fancier hand display
 
     """
     draw = ImageDraw.Draw(image)
@@ -46,6 +43,25 @@ def draw_hand(center: Tuple[int, int], length: int, time: int, image: Image) -> 
                   (inner_x, inner_y), (diamond_left_x, diamond_left_y)], fill=2, outline=1)
 
 
+def draw_simple_hand(center: Tuple[int, int], length: int, time: int, color: int, image: Image) -> None:
+    """Draw a simple hand of a given length and color on the image.
+
+    Args:
+        center: Center point of the clock face
+        length: The length of the hand in pixels
+        time:   Integer from 0 to 59 corresponding to valid points on clock
+        image:  Image file to draw on to
+
+    """
+    draw = ImageDraw.Draw(image)
+    time_offset = time - 15
+
+    outer_x = math.cos(math.radians(6 * time_offset)) * length + center[0]
+    outer_y = math.sin(math.radians(6 * time_offset)) * length + center[1]
+
+    draw.line([(center[0], center[1]), (outer_x, outer_y)], fill=color)
+
+
 def draw_face(center: Tuple[int, int], radius: int, image: Image) -> None:
     """Draw the face of the clock.
 
@@ -59,7 +75,7 @@ def draw_face(center: Tuple[int, int], radius: int, image: Image) -> None:
     ir = radius - radius / 10
     med = radius + 4
 
-    draw.ellipse([(center[0] - med, center[1] - med), (center[0] + med, center[1] + med)], outline=2)
+    draw.ellipse([(center[0] - med, center[1] - med), (center[0] + med, center[1] + med)], outline=1, width=2)
 
     for r in range(12):
         if not r % 3:
@@ -118,9 +134,12 @@ if __name__ == '__main__':
 
     now = time.localtime(time.time())
     minute = now.tm_min
+    second = now.tm_sec
     hour = ((now.tm_hour % 12) + (minute / 60)) * 5
-    draw_hand((52, 52), 48, minute, img)
-    draw_hand((52, 52), 32, hour, img)
+    draw_fancy_hand((52, 52), 48, minute, img)
+    draw_fancy_hand((52, 52), 32, hour, img)
+
+    draw_simple_hand((52, 52), 44, second, 2, img)
 
     draw_pin((52, 52), 2, img)
 
