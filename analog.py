@@ -15,9 +15,7 @@ def get_time() -> None:
     pass
 
 
-def draw_fancy_hand(
-    center: Tuple[int, int], length: int, time: int, image: Image
-) -> None:
+def draw_fancy_hand(center: Tuple[int, int], length: int, time: int, image: Image) -> None:
     """Draw a hand of given length on the image.
 
     Args:
@@ -32,39 +30,24 @@ def draw_fancy_hand(
     outer_x = math.cos(math.radians(6 * time_offset)) * length + center[0]
     outer_y = math.sin(math.radians(6 * time_offset)) * length + center[1]
 
-    diamond_left_x = (
-        math.cos(math.radians(6 * time_offset - 4)) * (length - 4) + center[0]
-    )
-    diamond_left_y = (
-        math.sin(math.radians(6 * time_offset - 4)) * (length - 4) + center[1]
-    )
+    diamond_left_x = math.cos(math.radians(6 * time_offset - 4)) * (length - 4) + center[0]
+    diamond_left_y = math.sin(math.radians(6 * time_offset - 4)) * (length - 4) + center[1]
 
-    diamond_right_x = (
-        math.cos(math.radians(6 * time_offset + 4)) * (length - 4) + center[0]
-    )
-    diamond_right_y = (
-        math.sin(math.radians(6 * time_offset + 4)) * (length - 4) + center[1]
-    )
+    diamond_right_x = math.cos(math.radians(6 * time_offset + 4)) * (length - 4) + center[0]
+    diamond_right_y = math.sin(math.radians(6 * time_offset + 4)) * (length - 4) + center[1]
 
     inner_x = math.cos(math.radians(6 * time_offset)) * (length - 8) + center[0]
     inner_y = math.sin(math.radians(6 * time_offset)) * (length - 8) + center[1]
 
     draw.line([(center[0], center[1]), (outer_x, outer_y)], fill=1)
     draw.polygon(
-        [
-            (outer_x, outer_y),
-            (diamond_right_x, diamond_right_y),
-            (inner_x, inner_y),
-            (diamond_left_x, diamond_left_y),
-        ],
+        [(outer_x, outer_y), (diamond_right_x, diamond_right_y), (inner_x, inner_y), (diamond_left_x, diamond_left_y),],
         fill=2,
         outline=1,
     )
 
 
-def draw_simple_hand(
-    center: Tuple[int, int], length: int, time: int, color: int, image: Image
-) -> None:
+def draw_simple_hand(center: Tuple[int, int], length: int, time: int, color: int, image: Image) -> None:
     """Draw a simple hand of a given length and color on the image.
 
     Args:
@@ -97,9 +80,7 @@ def draw_face(center: Tuple[int, int], radius: int, image: Image) -> None:
     med = radius + 4
 
     draw.ellipse(
-        [(center[0] - med, center[1] - med), (center[0] + med, center[1] + med)],
-        outline=1,
-        width=2,
+        [(center[0] - med, center[1] - med), (center[0] + med, center[1] + med)], outline=1, width=2,
     )
 
     for r in range(12):
@@ -147,12 +128,7 @@ def draw_pin(center: Tuple[int, int], radius: int, image: Image) -> None:
     """
     draw = ImageDraw.Draw(image)
     draw.ellipse(
-        [
-            (center[0] - radius, center[1] - radius),
-            (center[0] + radius, center[1] + radius),
-        ],
-        outline=1,
-        fill=2,
+        [(center[0] - radius, center[1] - radius), (center[0] + radius, center[1] + radius),], outline=1, fill=2,
     )
 
 
@@ -197,6 +173,51 @@ def draw_weather(image: Image, size: int = 16) -> None:
         wl = max(128, 212 - ww)
         draw.text((wl, 4), weather, font=font, fill=1, align="right")
         draw.text((212 - tw, 20), temp, font=font, fill=1, align="right")
+
+        icons = {
+            "overcast": "cloud",
+            "flurries": "snow",
+            "snow": "snow",
+            "sunny": "sun",
+            "cloudy": "cloud",
+            "drizzle": "rain",
+            "rain": "rain",
+            "windy": "wind",
+        }
+
+        try:
+            weather_icon = icons[weather.lower()]
+        except Exception:
+            pass
+        else:
+            weather_image = Image.open(f"resources/icon-{weather_icon}.png")
+            image.paste(
+                weather_image, (212 - weather_image.height, 104 - weather_image.width), create_mask(weather_image)
+            )
+
+
+def create_mask(source: Image, mask: Tuple[int, int, int] = (0, 1, 2)) -> Image:
+    """Create an image mask for pasting purposes.
+
+    Args:
+        source: Image to create the mask from
+        mask:   Tuple containing colormap indices to be masked
+
+    Returns:
+        An image mask for the source image
+
+    Attribution:
+        Written by folks at Pimoroni
+
+    """
+    mask_image = Image.new("1", source.size)
+    w, h = source.size
+    for x in range(w):
+        for y in range(h):
+            p = source.getpixel((x, y))
+            if p in mask:
+                mask_image.putpixel((x, y), 255)
+    return mask_image
 
 
 if __name__ == "__main__":
