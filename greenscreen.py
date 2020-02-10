@@ -31,4 +31,3 @@ import glob
 for ui_elem in glob.glob("resources/*.png"):
     img = Image.open(ui_elem)
     img.save(ui_elem, transparency=3, optimize=1)
-

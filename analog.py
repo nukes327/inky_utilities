@@ -15,7 +15,9 @@ def get_time() -> None:
     pass
 
 
-def draw_fancy_hand(center: Tuple[int, int], length: int, time: int, image: Image) -> None:
+def draw_fancy_hand(
+    center: Tuple[int, int], length: int, time: int, image: Image
+) -> None:
     """Draw a hand of given length on the image.
 
     Args:
@@ -30,21 +32,39 @@ def draw_fancy_hand(center: Tuple[int, int], length: int, time: int, image: Imag
     outer_x = math.cos(math.radians(6 * time_offset)) * length + center[0]
     outer_y = math.sin(math.radians(6 * time_offset)) * length + center[1]
 
-    diamond_left_x = math.cos(math.radians(6 * time_offset - 4)) * (length - 4) + center[0]
-    diamond_left_y = math.sin(math.radians(6 * time_offset - 4)) * (length - 4) + center[1]
+    diamond_left_x = (
+        math.cos(math.radians(6 * time_offset - 4)) * (length - 4) + center[0]
+    )
+    diamond_left_y = (
+        math.sin(math.radians(6 * time_offset - 4)) * (length - 4) + center[1]
+    )
 
-    diamond_right_x = math.cos(math.radians(6 * time_offset + 4)) * (length - 4) + center[0]
-    diamond_right_y = math.sin(math.radians(6 * time_offset + 4)) * (length - 4) + center[1]
+    diamond_right_x = (
+        math.cos(math.radians(6 * time_offset + 4)) * (length - 4) + center[0]
+    )
+    diamond_right_y = (
+        math.sin(math.radians(6 * time_offset + 4)) * (length - 4) + center[1]
+    )
 
     inner_x = math.cos(math.radians(6 * time_offset)) * (length - 8) + center[0]
     inner_y = math.sin(math.radians(6 * time_offset)) * (length - 8) + center[1]
 
     draw.line([(center[0], center[1]), (outer_x, outer_y)], fill=1)
-    draw.polygon([(outer_x, outer_y), (diamond_right_x, diamond_right_y),
-                  (inner_x, inner_y), (diamond_left_x, diamond_left_y)], fill=2, outline=1)
+    draw.polygon(
+        [
+            (outer_x, outer_y),
+            (diamond_right_x, diamond_right_y),
+            (inner_x, inner_y),
+            (diamond_left_x, diamond_left_y),
+        ],
+        fill=2,
+        outline=1,
+    )
 
 
-def draw_simple_hand(center: Tuple[int, int], length: int, time: int, color: int, image: Image) -> None:
+def draw_simple_hand(
+    center: Tuple[int, int], length: int, time: int, color: int, image: Image
+) -> None:
     """Draw a simple hand of a given length and color on the image.
 
     Args:
@@ -76,7 +96,11 @@ def draw_face(center: Tuple[int, int], radius: int, image: Image) -> None:
     ir = radius - radius / 10
     med = radius + 4
 
-    draw.ellipse([(center[0] - med, center[1] - med), (center[0] + med, center[1] + med)], outline=1, width=2)
+    draw.ellipse(
+        [(center[0] - med, center[1] - med), (center[0] + med, center[1] + med)],
+        outline=1,
+        width=2,
+    )
 
     for r in range(12):
         if not r % 3:
@@ -84,16 +108,32 @@ def draw_face(center: Tuple[int, int], radius: int, image: Image) -> None:
         else:
             base_x = math.cos((r * math.pi) / 6)
             base_y = math.sin((r * math.pi) / 6)
-            draw.line([(base_x * ir + center[0], base_y * ir + center[1]),
-                       (base_x * radius + center[0], base_y * radius + center[1])], fill=1)
+            draw.line(
+                [
+                    (base_x * ir + center[0], base_y * ir + center[1]),
+                    (base_x * radius + center[0], base_y * radius + center[1]),
+                ],
+                fill=1,
+            )
 
     for r in range(4):
         base_x = math.cos((r * math.pi) / 2)
         base_y = math.sin((r * math.pi) / 2)
-        draw.line([(base_x * ir + center[0], base_y * ir + center[1]),
-                   (base_x * radius + center[0], base_y * radius + center[1])], fill=1, width=3)
-        draw.line([(base_x * (ir + 1) + center[0], base_y * (ir + 1) + center[1]),
-                   (base_x * (radius - 1) + center[0], base_y * (radius - 1) + center[1])], fill=2)
+        draw.line(
+            [
+                (base_x * ir + center[0], base_y * ir + center[1]),
+                (base_x * radius + center[0], base_y * radius + center[1]),
+            ],
+            fill=1,
+            width=3,
+        )
+        draw.line(
+            [
+                (base_x * (ir + 1) + center[0], base_y * (ir + 1) + center[1]),
+                (base_x * (radius - 1) + center[0], base_y * (radius - 1) + center[1]),
+            ],
+            fill=2,
+        )
 
 
 def draw_pin(center: Tuple[int, int], radius: int, image: Image) -> None:
@@ -106,8 +146,14 @@ def draw_pin(center: Tuple[int, int], radius: int, image: Image) -> None:
 
     """
     draw = ImageDraw.Draw(image)
-    draw.ellipse([(center[0] - radius, center[1] - radius), (center[0] + radius, center[1] + radius)],
-                 outline=1, fill=2)
+    draw.ellipse(
+        [
+            (center[0] - radius, center[1] - radius),
+            (center[0] + radius, center[1] + radius),
+        ],
+        outline=1,
+        fill=2,
+    )
 
 
 def draw_date(now: time.struct_time, image: Image, size: int = 16) -> None:
@@ -119,9 +165,9 @@ def draw_date(now: time.struct_time, image: Image, size: int = 16) -> None:
         size:  Font size of the date
 
     """
-    font = ImageFont.truetype('resources/alagard.ttf', size=size)
+    font = ImageFont.truetype("resources/alagard.ttf", size=size)
     draw = ImageDraw.Draw(image)
-    draw.text((4, 4), time.strftime('%b %d\n%a\n%Y'), font=font, fill=1)
+    draw.text((4, 4), time.strftime("%b %d\n%a\n%Y"), font=font, fill=1)
 
 
 def draw_weather(image: Image, size: int = 16) -> None:
@@ -137,24 +183,23 @@ def draw_weather(image: Image, size: int = 16) -> None:
     except Exception as e:
         return
     res = requests.get("https://darksky.net/forecast/40.2723,-82.8835/us12/en")
-    if (res.status_code == 200):
+    if res.status_code == 200:
         soup = BeautifulSoup(res.content, "lxml")
         current = soup.find_all("span", "currently")
         summary = current[0].find("span", "summary")
-        temp, weather = summary.string.split('\xA0')
-        temp = temp[:-1] + ' deg'
+        temp, weather = summary.string.split("\xA0")
+        temp = temp[:-1] + " deg"
         weather = weather[:-1]
         draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype('resources/alagard.ttf', size=size)
+        font = ImageFont.truetype("resources/alagard.ttf", size=size)
         tw, th = draw.textsize(temp, font)
         ww, wh = draw.textsize(weather, font)
         wl = max(128, 212 - ww)
-        draw.text((wl, 4), weather, font=font, fill=1, align='right')
-        draw.text((212 - tw, 20), temp, font=font, fill=1, align='right')
-        
+        draw.text((wl, 4), weather, font=font, fill=1, align="right")
+        draw.text((212 - tw, 20), temp, font=font, fill=1, align="right")
 
-        
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     palette = 3 * [255]
     palette += 3 * [0]
     palette += [166, 152, 1]
@@ -174,7 +219,7 @@ if __name__ == '__main__':
 
     # second = now.tm_sec
     second = randint(0, 59)
-    while((second == minute) or (second == hour)):
+    while (second == minute) or (second == hour):
         second = randint(0, 59)
 
     draw_simple_hand((clock_center, 52), 42, second, 2, img)
@@ -186,7 +231,7 @@ if __name__ == '__main__':
     draw_weather(img)
 
     img.putpalette(palette)
-    img.save('analog.png')
+    img.save("analog.png")
     try:
         from inky import InkyPHAT  # type: ignore
     except RuntimeError:
@@ -194,7 +239,7 @@ if __name__ == '__main__':
     except ModuleNotFoundError:
         pass
     else:
-        inky_display = InkyPHAT('yellow')
+        inky_display = InkyPHAT("yellow")
         inky_display.set_image(img.rotate(180))
         inky_display.set_border(inky_display.BLACK)
         inky_display.show()

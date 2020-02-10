@@ -23,7 +23,8 @@ def draw_what_sheet(image: Image) -> None:
     for line in range(7):
         draw.line([(7, line * 45 + 26), (392, line * 45 + 26)], fill=1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     palette = 3 * [255]
     palette += 3 * [0]
     palette += [255, 0, 0]
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     draw_what_sheet(img)
 
     img.putpalette(palette)
-    img.save('calendar.png')
+    img.save("calendar.png")
     try:
         from inky import InkyWHAT  # type: ignore
     except RuntimeError:
@@ -42,8 +43,7 @@ if __name__ == '__main__':
     except ModuleNotFoundError:
         pass
     else:
-        inky_display = InkyWHAT('red')
+        inky_display = InkyWHAT("red")
         inky_display.set_image(img)
         inky_display.set_border(inky_display.BLACK)
         inky_display.show()
-
