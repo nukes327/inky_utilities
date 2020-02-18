@@ -1,3 +1,5 @@
 *.png
 *.json
+*.ini
+*.toml
 __pycache__

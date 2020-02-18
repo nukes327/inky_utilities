@@ -1,0 +1,26 @@
+[system]
+
+    [system.screen]
+    color = "yellow"
+    type = "phat"
+    orientation = "landscape"
+    vert_flip = true
+
+    [system.misc]
+    datefmt = "YYYY-MM-DD"
+
+[utils]
+
+    [utils.analog]
+    second_hand = false
+
+    [utils.calendar]
+    week_start = "Monday"
+
+[apis]
+
+    [apis.darksky]
+    secret = 'Replace me'
+    message_limit = 1000
+    latitude = 40.0
+    longitude = 40.0
