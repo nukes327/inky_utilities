@@ -1,5 +1,5 @@
 *.png
 *.json
 *.ini
-*.toml
+config/*.toml
 __pycache__
