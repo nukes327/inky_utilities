@@ -20,7 +20,13 @@
 [apis]
 
     [apis.darksky]
-    secret = 'Replace me'
+    secret = '5a7f40b5d4646108b12176f9e1f32d7d'
     message_limit = 1000
-    latitude = 40.0
-    longitude = 40.0
+    latitude = 40.2723
+    longitude = -82.8835
+
+    [apis.openweathermap]
+    secret = 'a76c81d5c324c4d02a380c8823a1202e'
+    message_limit = 1000
+    latitude = 40.2723
+    longitude = -82.8835

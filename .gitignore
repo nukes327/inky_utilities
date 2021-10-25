@@ -2,4 +2,5 @@
 *.json
 *.ini
 config/*.toml
+logs/
 __pycache__
