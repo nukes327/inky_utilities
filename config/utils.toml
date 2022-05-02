@@ -1,0 +1,32 @@
+[system]
+
+    [system.screen]
+    color = "yellow"
+    type = "phat"
+    orientation = "landscape"
+    vert_flip = true
+
+    [system.misc]
+    datefmt = "YYYY-MM-DD"
+
+[utils]
+
+    [utils.analog]
+    second_hand = false
+
+    [utils.calendar]
+    week_start = "Monday"
+
+[apis]
+
+    [apis.darksky]
+    secret = '5a7f40b5d4646108b12176f9e1f32d7d'
+    message_limit = 1000
+    latitude = 40.2723
+    longitude = -82.8835
+
+    [apis.openweathermap]
+    secret = 'a76c81d5c324c4d02a380c8823a1202e'
+    message_limit = 1000
+    latitude = 40.2723
+    longitude = -82.8835

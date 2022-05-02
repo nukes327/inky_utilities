@@ -8,6 +8,8 @@ from typing import Tuple, Union, Optional, Literal
 from utils.utils import clamp
 import math
 import time
+import json
+import pprint
 from random import randint
 import logging
 
@@ -285,26 +287,75 @@ def draw_weather(image: Image.Image, size: int = 16) -> None:
         image: The image to draw to
 
     """
+    logger = logging.getLogger(__name__)
+    logger.debug(f"Input values:\nImage:\t{image}\nSize:\t{size}")
     try:
-        import requests
-        from bs4 import BeautifulSoup  # type: ignore
-    except Exception:
+        with open("forecast.json", "r") as infile:
+            forecast = json.load(infile)
+    except FileNotFoundError:
+        logger.error("No forecast data found in directory.")
         return
-    res = requests.get("https://darksky.net/forecast/40.2723,-82.8835/us12/en")
-    if res.status_code == 200:
-        soup = BeautifulSoup(res.content, "lxml")
-        current = soup.find_all("span", "currently")
-        summary = current[0].find("span", "summary")
-        temp, weather = summary.string.split("\xA0")
-        temp = temp[:-1] + " deg"
-        weather = weather[:-1]
-        draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype("resources/alagard.ttf", size=size)
-        tw, th = draw.textsize(temp, font)
-        ww, wh = draw.textsize(weather, font)
-        wl = max(128, 212 - ww)
-        draw.text((wl, 4), weather, font=font, fill=1, align="right")
-        draw.text((212 - tw, 20), temp, font=font, fill=1, align="right")
+
+    logger.debug(f"Forecast JSON loaded:\n{pprint.pformat(forecast)}")
+    now = forecast["currently"]
+    draw.ImageDraw.Draw(image)
+    font = ImageFont.truetype("resources/alagard.ttf", size=size)
+    tw, th = draw.textsize(now["temperature"], font)
+    atw, ath = draw.textsize(now["apparentTemperature"], font)
+    ww, wh = draw.textsize(now["summary"], font)
+    wl = max(128, 212 - ww)
+    logger.debug(f"Calculated text variables:\n"
+                 f"Temp width, height: {tw}, {th}\n"
+                 f"Apparent temp width, height: {atw}, {ath}\n"
+                 f"Weather width, height: {ww}, {wh}\n"
+                 f"Weather left edge: {wl}"
+    )
+    draw.text((wl, 4), now["summary"], font=font, fill=1, align="right")
+    draw.text((212 - tw, 20), now["temperature"], font=font, fill=1, align="right")
+    draw.text((212 - atw, 36), now["apparentTemperature"], font=font, fill=1, align="right")
+
+    icons = {
+        "overcast": "cloud",
+        "flurries": "snow",
+        "snow": "snow",
+        "sunny": "sun",
+        "cloudy": "cloud",
+        "drizzle": "rain",
+        "rain": "rain",
+        "windy": "wind",
+    }
+
+    try:
+        weather_icon = icons[now["summary"]]
+    except Exception:
+        pass
+    else:
+        weather_image = Image.open(f"resources/icon-{weather_icon}.png")
+        image.paste(weather_image, (212 - weather_image.height, 104 - weather_image.width), create_mask(weather_image))
+
+
+def create_mask(source: Image, mask: Tuple[int, int, int] = (0, 1, 2)) -> Image:
+    """Create an image mask for pasting purposes.
+
+    Args:
+        source: Image to create the mask from
+        mask:   Tuple containing colormap indices to be masked
+
+    Returns:
+        An image mask for the source image
+
+    Attribution:
+        Written by folks at Pimoroni
+
+    """
+    mask_image = Image.new("1", source.size)
+    w, h = source.size
+    for x in range(w):
+        for y in range(h):
+            p = source.getpixel((x, y))
+            if p in mask:
+                mask_image.putpixel((x, y), 255)
+    return mask_image
 
 
 if __name__ == "__main__":

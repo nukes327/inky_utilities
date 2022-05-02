@@ -1,4 +1,7 @@
 *.png
 *.json
+*.ini
+config/*.toml
+logs/
 __pycache__
 docs/build/

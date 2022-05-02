@@ -11,3 +11,5 @@ This library is a work in progress for my own personal use currently.
 Features will be added as I feel the need or desire for them.
 
 *Currently* it is built specifically for the inkyPHAT display, but soon will support a configuration file to choose display and rotations.
+
+All weather readouts are powered by Darksky.net
