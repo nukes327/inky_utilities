@@ -1,2 +1,4 @@
 inky
 PIL
+requests
+BS4

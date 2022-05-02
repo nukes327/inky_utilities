@@ -3,9 +3,7 @@
 
 """Fetch data from darksky API and save to a file.
 
-Todo:
-    Implement call limit checking
-
+DEPRECATED
 """
 
 import json
