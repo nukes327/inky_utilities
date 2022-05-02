@@ -1,4 +1,4 @@
-from inky import InkyPHAT
+from inky import InkyPHAT  # type: ignore
 from PIL import Image
 
 inky_display = InkyPHAT("yellow")

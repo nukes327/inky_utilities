@@ -1,3 +1,4 @@
 *.png
 *.json
 __pycache__
+docs/build/

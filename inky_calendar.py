@@ -4,11 +4,12 @@
 """Display a calendar populated from google calendar data on an inky display."""
 
 from PIL import Image, ImageDraw  # type: ignore
-from typing import Tuple
-import time
+
+# from typing import Tuple
+# import time
 
 
-def draw_what_sheet(image: Image) -> None:
+def draw_what_sheet(image: Image.Image) -> None:
     """Draw a calendar page for a WHAT display.
 
     Args:

@@ -25,9 +25,9 @@ Todo:
 """
 
 
-from PIL import Image  # type: ignore
+from PIL import Image
 import glob
 
 for ui_elem in glob.glob("resources/*.png"):
     img = Image.open(ui_elem)
-    img.save(ui_elem, transparency=3, optimize=1)
+    img.save(ui_elem, transparency=3, optimize=1)  # type: ignore
